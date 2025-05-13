@@ -5,7 +5,8 @@ app = Flask(__name__)
 def index():
     return(render_template("index.html"))
 @app.route("/gemini",methods=["GET","POST"])
-
+def gemini():
+    return(render_template("gemini.html"))
 @app.route("/gemini_reply",methods=["GET","POST"])
 def gemini_reply():
     q = request.form.get("q")
@@ -13,7 +14,5 @@ def gemini_reply():
     #gemini
     r=q
     return(render_template("gemini_reply.html",r=r))
-def gemini():
-    return(render_template("gemini.html"))
 if __name__ == "__main__":
     app.run()
