@@ -79,3 +79,40 @@ if __name__ == "__main__":
 
 # if __name__ == "__main__":
 #     app.run()
+
+# Chatgpt generated
+# from dotenv import load_dotenv
+# load_dotenv()
+
+# from flask import Flask, request, render_template
+# import google.generativeai as genai
+# import os
+
+# # Safely fetch Gemini API key
+# api_key = os.getenv("gemini_key")
+# if not api_key:
+#     raise ValueError("Gemini API key not found in environment variables.")
+# genai.configure(api_key=api_key)
+
+# # Load Gemini model
+# model = genai.GenerativeModel("gemini-2.0-flash")
+
+# app = Flask(__name__)
+
+# @app.route("/", methods=["GET", "POST"])
+# def index():
+#     return render_template("index.html")
+
+# @app.route("/gemini", methods=["GET", "POST"])
+# def gemini():
+#     return render_template("gemini.html")
+
+# @app.route("/gemini_reply", methods=["GET", "POST"])
+# def gemini_reply():
+#     q = request.form.get("q")
+#     print("User question:", q)
+#     r = model.generate_content(q)
+#     return render_template("gemini_reply.html", r=r.text)
+
+# if __name__ == "__main__":
+#     app.run()
