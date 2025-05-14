@@ -31,10 +31,10 @@ import os
 
 # Configure Gemini
 # genai.configure(api_key=os.environ["gemini_key"])
-genai.configure(api_key="<INSERT_GEMINI_API_KEY>")
+genai.configure(api_key="gemini_key")
 
 # Configure OpenAI
-client = OpenAI(api_key="<INSERT_OPENAI_API_KEY>")
+client = OpenAI(api_key="gemini_key")
 
 # Configure Gemini model
 model = genai.GenerativeModel("gemini-2.0-flash")
