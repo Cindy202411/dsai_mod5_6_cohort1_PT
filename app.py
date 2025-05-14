@@ -3,7 +3,8 @@ import os
 from flask import Flask,request,render_template
 import google.generativeai as genai
 
-genai.configure(api_key="gemini_key")
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+#genai.configure(api_key="gemini_key")
 model = genai.GenerativeModel("gemini-2.0-flash")
 app = Flask(__name__)
 @app.route("/",methods=["GET","POST"])
