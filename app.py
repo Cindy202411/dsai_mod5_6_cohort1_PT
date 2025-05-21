@@ -1,118 +1,85 @@
 #gemini
 
-from dotenv import load_dotenv
-load_dotenv()
 from flask import Flask,request,render_template
 import google.generativeai as genai
 import os
+import sqlite3
+import datetime
 
-api_key= os.getenv('gemini_key') #load from rander
-genai.configure(api_key=os.environ["GEMINI_KEY"]) # load from genai
-#genai.configure(api_key="gemini_key")
+gemini_api_key = os.getenv("gemini_api_key")
+
+genai.configure(api_key=gemini_api_key)
 model = genai.GenerativeModel("gemini-2.0-flash")
+
 app = Flask(__name__)
+
+first_time = 1
+
 @app.route("/",methods=["GET","POST"])
 def index():
     return(render_template("index.html"))
+
+@app.route("/main",methods=["GET","POST"])
+def main():
+    global first_time
+    if first_time==1:
+        q = request.form.get("q")
+        print(q)
+        t = datetime.datetime.now()
+        conn = sqlite3.connect('user.db')
+        c = conn.cursor()
+        c.execute("insert into users(name,timestamp) values(?,?)",(q,t))
+        conn.commit()
+        c.close()
+        conn.close()
+        first_time=0
+    return(render_template("main.html"))
+
 @app.route("/gemini",methods=["GET","POST"])
 def gemini():
     return(render_template("gemini.html"))
+
 @app.route("/gemini_reply",methods=["GET","POST"])
 def gemini_reply():
     q = request.form.get("q")
     print(q)
     r = model.generate_content(q)
     return(render_template("gemini_reply.html",r=r.text))
+
+@app.route("/paynow",methods=["GET","POST"])
+def paynow():
+    return(render_template("paynow.html"))
+
+@app.route("/user_log",methods=["GET","POST"])
+def user_log():
+    #read
+    conn = sqlite3.connect('user.db')
+    c = conn.cursor()
+    c.execute("select * from users")
+    r=""
+    for row in c:
+        print(row)
+        r= r+str(row)
+    c.close()
+    conn.close()
+    return(render_template("user_log.html",r=r))
+
+@app.route("/delete_log",methods=["GET","POST"])
+def delete_log():
+    conn = sqlite3.connect('user.db')
+    c = conn.cursor()
+    c.execute("delete from users")
+    conn.commit()
+    c.close()
+    conn.close()
+    return(render_template("delete_log.html"))
+
+@app.route("/logout",methods=["GET","POST"])
+def logout():
+    global first_time
+    first_time = 1
+    return(render_template("index.html"))
+
 if __name__ == "__main__":
     app.run()
 
-
-#gemini
-
-# from flask import Flask, request, render_template
-# import google.generativeai as genai
-# from openai import OpenAI
-# import os
-
-# # Configure Gemini
-# # genai.configure(api_key=os.environ["gemini_key"])
-# genai.configure(api_key="gemini_key")
-
-# # Configure OpenAI
-# client = OpenAI(api_key="gemini_key")
-
-# # Configure Gemini model
-# model = genai.GenerativeModel("gemini-2.0-flash")
-
-# # Flask
-# app = Flask(__name__)
-
-# @app.route("/", methods=["GET", "POST"])
-# def index():
-#     return(render_template("index.html"))
-
-# @app.route("/gemini",methods=["GET","POST"])
-# def gemini():
-#     return(render_template("gemini.html"))
-
-# @app.route("/gemini_reply",methods=["GET","POST"])
-# def gemini_reply():
-#     q = request.form.get("q")
-#     print(q)
-#     r = model.generate_content(q)
-#     r = r.text
-#     return(render_template("gemini_reply.html",r=r))
-
-# @app.route("/openai",methods=["GET","POST"])
-# def openai():
-#     return(render_template("openai.html"))
-
-# @app.route("/openai_reply",methods=["GET","POST"])
-# def openai_reply():
-#     q = request.form.get("q")
-#     response = client.chat.completions.create(
-#       model="gpt-4-turbo",
-#       messages=[{"role": "user", "content": q}]
-#     )
-#     r = response.choices[0].message.content
-#     return(render_template("openai_reply.html",r=r))
-
-# if __name__ == "__main__":
-#     app.run()
-
-# Chatgpt generated
-# from dotenv import load_dotenv
-# load_dotenv()
-
-# from flask import Flask, request, render_template
-# import google.generativeai as genai
-# import os
-
-# # Safely fetch Gemini API key
-# api_key = os.getenv("gemini_key")
-# if not api_key:
-#     raise ValueError("Gemini API key not found in environment variables.")
-# genai.configure(api_key=api_key)
-
-# # Load Gemini model
-# model = genai.GenerativeModel("gemini-2.0-flash")
-
-# app = Flask(__name__)
-
-# @app.route("/", methods=["GET", "POST"])
-# def index():
-#     return render_template("index.html")
-
-# @app.route("/gemini", methods=["GET", "POST"])
-# def gemini():
-#     return render_template("gemini.html")
-
-# @app.route("/gemini_reply", methods=["GET", "POST"])
-# def gemini_reply():
-#     q = request.form.get("q")
-#     print("User question:", q)
-#     r = model.generate_content(q)
-#     return render_template("gemini_reply.html", r=r.text)
-
-# if __name__ == "__main__":
-#     app.run()
