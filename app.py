@@ -39,6 +39,10 @@ def main():
 def gemini():
     return(render_template("gemini.html"))
 
+@app.route("/prediction",methods=["GET","POST"])
+def prediction():
+    return(render_template("prediction.html"))
+
 @app.route("/gemini_reply",methods=["GET","POST"])
 def gemini_reply():
     q = request.form.get("q")
@@ -63,6 +67,8 @@ def user_log():
     c.close()
     conn.close()
     return(render_template("user_log.html",r=r))
+
+
 
 @app.route("/delete_log",methods=["GET","POST"])
 def delete_log():
