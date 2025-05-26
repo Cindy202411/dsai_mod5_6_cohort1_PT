@@ -68,6 +68,11 @@ def user_log():
     conn.close()
     return(render_template("user_log.html",r=r))
 
+@app.route("/prediction_reply",methods=["GET","POST"])
+def prediction_reply():
+    q = float(request.form.get("q"))
+    print(q)
+    return(render_template("prediction_reply.html",r=90.2 + (-50.6*q)))
 
 
 @app.route("/delete_log",methods=["GET","POST"])
